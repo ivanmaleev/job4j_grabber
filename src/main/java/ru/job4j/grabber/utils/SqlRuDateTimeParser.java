@@ -5,16 +5,28 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * @author Администратор
+ */
 public class SqlRuDateTimeParser implements DateTimeParser {
 
-    private static final Map<String, String> MONTHS = Map.ofEntries(Map.entry("янв", "Jan"), Map.entry("фев", "Feb"), Map.entry("мар", "Mar"),
-            Map.entry("апр", "Apr"), Map.entry("май", "May"), Map.entry("июн", "Jun"), Map.entry("июл", "Jul"), Map.entry("авг", "Aug"),
-            Map.entry("сен", "Sep"), Map.entry("окт", "Okt"), Map.entry("ноя", "Nov"), Map.entry("дек", "Dec"));
+    private static final Map<String, String> MONTHS =
+            Map.ofEntries(Map.entry("янв", "Jan"),
+            Map.entry("фев", "Feb"), Map.entry("мар", "Mar"),
+            Map.entry("апр", "Apr"), Map.entry("май", "May"),
+            Map.entry("июн", "Jun"), Map.entry("июл", "Jul"),
+            Map.entry("авг", "Aug"), Map.entry("сен", "Sep"),
+            Map.entry("окт", "Okt"), Map.entry("ноя", "Nov"),
+            Map.entry("дек", "Dec"));
 
+    /**
+     * @param parse parse
+     */
     @Override
     public LocalDateTime parse(String parse) {
         if (parse.startsWith("сегодня") || parse.startsWith("вчера")) {
-            DateTimeFormatter dateTimeFormatterToday = DateTimeFormatter.ofPattern("d MMM yy", Locale.ENGLISH);
+            DateTimeFormatter dateTimeFormatterToday =
+                    DateTimeFormatter.ofPattern("d MMM yy", Locale.ENGLISH);
             LocalDateTime now = LocalDateTime.now();
             if (parse.startsWith("сегодня")) {
                 String today = now.format(dateTimeFormatterToday);
@@ -33,10 +45,14 @@ public class SqlRuDateTimeParser implements DateTimeParser {
                 }
             }
         }
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yy, HH:mm", Locale.ENGLISH);
+        DateTimeFormatter dateTimeFormatter =
+                DateTimeFormatter.ofPattern("d MMM yy, HH:mm", Locale.ENGLISH);
         return LocalDateTime.parse(parse, dateTimeFormatter);
     }
 
+    /**
+     * @param args args
+     */
     public static void main(String[] args) {
         SqlRuDateTimeParser sqlRuDateTimeParser = new SqlRuDateTimeParser();
         System.out.println(sqlRuDateTimeParser.parse("02 апр 19, 22:33"));

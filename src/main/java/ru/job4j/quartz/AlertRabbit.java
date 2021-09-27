@@ -12,10 +12,16 @@ import static org.quartz.JobBuilder.*;
 import static org.quartz.TriggerBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.*;
 
+/**
+ * @author Администратор
+ */
 public class AlertRabbit {
 
     private static Connection connection;
 
+    /**
+     * @param args args
+     */
     public static void main(String[] args) {
         final Properties properties = readProperties();
         String property = properties.getProperty("rabbit.interval");
@@ -52,7 +58,11 @@ public class AlertRabbit {
 
     }
 
-    public static void initConnection(Properties properties) throws IOException, ClassNotFoundException, SQLException {
+    /**
+     * @param properties properties
+     */
+    public static void initConnection(Properties properties)
+            throws IOException, ClassNotFoundException, SQLException {
         InputStream in = AlertRabbit.class.getClassLoader()
                 .getResourceAsStream("rabbit.properties");
         properties.load(in);
@@ -63,11 +73,19 @@ public class AlertRabbit {
                 properties.getProperty("password"));
     }
 
+    /**
+     * @author Администратор
+     */
     public static class Rabbit implements Job {
+        /**
+         * @param context context
+         */
         @Override
-        public void execute(JobExecutionContext context) throws JobExecutionException {
+        public void execute(JobExecutionContext context) {
             System.out.println("Rabbit runs here ...");
-            Connection connection = (Connection) context.getJobDetail().getJobDataMap().get("connection");
+            Connection connection = (Connection) context.getJobDetail()
+                    .getJobDataMap()
+                    .get("connection");
             try (PreparedStatement statement =
                          connection.prepareStatement(
                                  "insert into rabbit(created_date) values (?)",
@@ -80,9 +98,14 @@ public class AlertRabbit {
         }
     }
 
+    /**
+     * @return return
+     */
     private static Properties readProperties() {
         final Properties properties = new Properties();
-        try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
+        try (InputStream in = AlertRabbit.class
+                .getClassLoader()
+                .getResourceAsStream("rabbit.properties")) {
             properties.load(in);
         } catch (Exception e) {
             e.printStackTrace();

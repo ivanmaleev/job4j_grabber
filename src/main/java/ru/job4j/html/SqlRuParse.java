@@ -5,7 +5,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * @author Администратор
+ */
 public class SqlRuParse {
+    /**
+     * @param args args
+     */
     public static void main(String[] args) throws Exception {
         String address = "https://www.sql.ru/forum/job-offers/";
         for (int i = 1; i < 6; i++) {
