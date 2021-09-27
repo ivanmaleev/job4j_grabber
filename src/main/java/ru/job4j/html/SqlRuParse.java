@@ -13,7 +13,7 @@ public class SqlRuParse {
      * @param args args
      */
     public static void main(String[] args) throws Exception {
-        String address = "https://www.sql.ru/forum/job-offers/";
+        String address = "https:/" + "/www.sql.ru/forum/job-offers/";
         for (int i = 1; i < 6; i++) {
             String fullAddress = address + i;
             Document doc = Jsoup.connect(fullAddress).get();
