@@ -33,7 +33,7 @@ public class SqlRuParse implements Parse {
     }
 
     public static void main(String[] args) throws Exception {
-/*        SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
+        /*SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
         List<Post> posts = sqlRuParse.list("https:/" + "/www.sql.ru/forum/job-offers/");
         posts.forEach(System.out::println);
         Post post = sqlRuParse.detail("https://www.sql.ru/forum/1339076/razrabotka-veb-kraulera");
@@ -73,7 +73,6 @@ public class SqlRuParse implements Parse {
         String textPages = row.get(1).children().get(0).children().get(0).children().get(0).text();
         String[] s = textPages.split(" ");
         int numberOfPages = Integer.parseInt(s[s.length - 1]);
-
         for (int page = 1; page < numberOfPages; page++) {
             String fullAddress = link + page;
             try {
