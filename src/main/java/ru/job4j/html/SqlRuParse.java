@@ -23,8 +23,12 @@ public class SqlRuParse implements Parse {
     public SqlRuParse(DateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
     }
+
     public static void main(String[] args) throws Exception {
-        datesOfFirstFivePages();
+        SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
+        Post vacancy = sqlRuParse.detail("https:/" + "/www.sql.ru/forum/1325330/"
+                + "lidy-be-fe-senior-cistemnye-analitiki-qa-i-devops-moskva-do-200t");
+        System.out.println(vacancy);
     }
 
     private static void datesOfFirstFivePages() throws IOException {
@@ -42,43 +46,38 @@ public class SqlRuParse implements Parse {
 
     @Override
     public List<Post> list(String link) {
-        List<Post> vacancies = new ArrayList<>();
+        return null;
+    }
+
+    @Override
+    public Post detail(String link) {
         Document doc = null;
         try {
             doc = Jsoup.connect(link).get();
         } catch (IOException e) {
             e.printStackTrace();
-            return vacancies;
+            return null;
         }
         Elements row = doc.select(".msgTable");
-        DateTimeParser dateTimeParser = new SqlRuDateTimeParser();
-        for (Element td : row) {
-            String title = td.children().get(0)
-                    .children().get(0).text();
-            String dateText = td.children().get(0)
-                    .children().get(2).text().trim();
-            String[] split = dateText.split(" ");
-            if (split[0].equals("сегодня") || split[0].equals("вчера")) {
-                dateText = split[0].concat(" ")
-                        .concat(split[1]).concat(" ")
-                        .concat(split[2]);
-            } else {
-                dateText = split[0].concat(" ")
-                        .concat(split[1]).concat(" ")
-                        .concat(split[2]).concat(" ")
-                        .concat(split[3]);
-            }
-            String description = td.children().get(0)
-                    .children().get(1)
-                    .children().get(1).text();
-
-            vacancies.add(new Post(title, link, description, dateTimeParser.parse(dateText)));
+        Element td = row.get(0);
+        String title = td.children().get(0)
+                .children().get(0).text();
+        String dateText = td.children().get(0)
+                .children().get(2).text().trim();
+        String[] split = dateText.split(" ");
+        if (split[0].equals("сегодня") || split[0].equals("вчера")) {
+            dateText = split[0].concat(" ")
+                    .concat(split[1]).concat(" ")
+                    .concat(split[2]);
+        } else {
+            dateText = split[0].concat(" ")
+                    .concat(split[1]).concat(" ")
+                    .concat(split[2]).concat(" ")
+                    .concat(split[3]);
         }
-        return vacancies;
-    }
-
-    @Override
-    public Post detail(String link) {
-        return null;
+        String description = td.children().get(0)
+                .children().get(1)
+                .children().get(1).text();
+        return new Post(title, link, description, dateTimeParser.parse(dateText));
     }
 }
