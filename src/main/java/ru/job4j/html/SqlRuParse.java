@@ -25,6 +25,7 @@ public class SqlRuParse implements Parse {
     }
     public static void main(String[] args) throws Exception {
         datesOfFirstFivePages();
+
         //List<Post> vacancies = list();
         //vacancies.forEach(System.out::println);
     }
