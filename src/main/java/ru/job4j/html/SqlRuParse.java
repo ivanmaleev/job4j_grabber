@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import ru.job4j.Post;
+import ru.job4j.grabber.Parse;
 import ru.job4j.grabber.utils.DateTimeParser;
 import ru.job4j.grabber.utils.SqlRuDateTimeParser;
 
@@ -15,14 +16,17 @@ import java.util.List;
 /**
  * @author Администратор
  */
-public class SqlRuParse {
-    /**
-     * @param args args
-     */
+public class SqlRuParse implements Parse {
+
+    private final DateTimeParser dateTimeParser;
+
+    public SqlRuParse(DateTimeParser dateTimeParser) {
+        this.dateTimeParser = dateTimeParser;
+    }
     public static void main(String[] args) throws Exception {
         datesOfFirstFivePages();
-        List<Post> vacancies = findVacancies();
-        vacancies.forEach(System.out::println);
+        //List<Post> vacancies = list();
+        //vacancies.forEach(System.out::println);
     }
 
     private static void datesOfFirstFivePages() throws IOException {
@@ -38,10 +42,16 @@ public class SqlRuParse {
         }
     }
 
-    private static List<Post> findVacancies() throws IOException {
+    @Override
+    public List<Post> list(String link) {
         List<Post> vacancies = new ArrayList<>();
-        String address = "https://www.sql.ru/forum/1325330/lidy-be-fe-senior-cistemnye-analitiki-qa-i-devops-moskva-do-200t";
-        Document doc = Jsoup.connect(address).get();
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(link).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return vacancies;
+        }
         Elements row = doc.select(".msgTable");
         DateTimeParser dateTimeParser = new SqlRuDateTimeParser();
         for (Element td : row) {
@@ -64,8 +74,13 @@ public class SqlRuParse {
                     .children().get(1)
                     .children().get(1).text();
 
-            vacancies.add(new Post(title, address, description, dateTimeParser.parse(dateText)));
+            vacancies.add(new Post(title, link, description, dateTimeParser.parse(dateText)));
         }
         return vacancies;
+    }
+
+    @Override
+    public Post detail(String link) {
+        return null;
     }
 }
