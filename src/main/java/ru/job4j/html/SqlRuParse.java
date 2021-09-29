@@ -26,9 +26,8 @@ public class SqlRuParse implements Parse {
 
     public static void main(String[] args) throws Exception {
         SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
-        Post vacancy = sqlRuParse.detail("https:/" + "/www.sql.ru/forum/1325330/"
-                + "lidy-be-fe-senior-cistemnye-analitiki-qa-i-devops-moskva-do-200t");
-        System.out.println(vacancy);
+        List<Post> posts = sqlRuParse.list("https:/" + "/www.sql.ru/forum/job-offers/");
+        posts.forEach(System.out::println);
     }
 
     private static void datesOfFirstFivePages() throws IOException {
@@ -46,7 +45,36 @@ public class SqlRuParse implements Parse {
 
     @Override
     public List<Post> list(String link) {
-        return null;
+        List<Post> posts = new ArrayList<>();
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(link).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return posts;
+        }
+        Elements row = doc.select(".sort_options");
+        String textPages = row.get(1).children().get(0).children().get(0).children().get(0).text();
+        String[] s = textPages.split(" ");
+        int numberOfPages = Integer.parseInt(s[s.length - 1]);
+
+        for (int page = 1; page < numberOfPages; page++) {
+            String fullAddress = link + page;
+            try {
+                doc = Jsoup.connect(fullAddress).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+                continue;
+            }
+            row = doc.select(".forumTable");
+            Elements postChildrens = row.get(0).children().get(0).children();
+            for (int i = (page == 1 ? 4 : 1); i < postChildrens.size(); i++) {
+                Element element = postChildrens.get(i);
+                String postLink = element.children().get(1).children().get(0).attr("href");
+                posts.add(detail(postLink));
+            }
+        }
+        return posts;
     }
 
     @Override
@@ -65,10 +93,9 @@ public class SqlRuParse implements Parse {
         String dateText = td.children().get(0)
                 .children().get(2).text().trim();
         String[] split = dateText.split(" ");
-        if (split[0].equals("сегодня") || split[0].equals("вчера")) {
+        if (split[0].equals("сегодня,") || split[0].equals("вчера,")) {
             dateText = split[0].concat(" ")
-                    .concat(split[1]).concat(" ")
-                    .concat(split[2]);
+                    .concat(split[1]);
         } else {
             dateText = split[0].concat(" ")
                     .concat(split[1]).concat(" ")
