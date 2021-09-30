@@ -6,12 +6,20 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import ru.job4j.Post;
 import ru.job4j.grabber.Parse;
+import ru.job4j.grabber.PsqlStore;
 import ru.job4j.grabber.utils.DateTimeParser;
 import ru.job4j.grabber.utils.SqlRuDateTimeParser;
+import ru.job4j.quartz.AlertRabbit;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author Администратор
@@ -25,9 +33,17 @@ public class SqlRuParse implements Parse {
     }
 
     public static void main(String[] args) throws Exception {
-        SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
+/*        SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
         List<Post> posts = sqlRuParse.list("https:/" + "/www.sql.ru/forum/job-offers/");
         posts.forEach(System.out::println);
+        Post post = sqlRuParse.detail("https://www.sql.ru/forum/1339076/razrabotka-veb-kraulera");
+        System.out.println(post);*/
+        final Properties cfg = AlertRabbit.readProperties();
+        PsqlStore psqlStore = new PsqlStore(cfg);
+        Post post = new Post("name3", "link3", "text3", LocalDateTime.now());
+        psqlStore.save(post);
+        System.out.println(psqlStore.findById(2));
+        System.out.println(psqlStore.getAll());
     }
 
     private static void datesOfFirstFivePages() throws IOException {

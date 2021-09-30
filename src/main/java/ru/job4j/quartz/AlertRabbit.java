@@ -101,7 +101,7 @@ public class AlertRabbit {
     /**
      * @return return
      */
-    private static Properties readProperties() {
+    public static Properties readProperties() {
         final Properties properties = new Properties();
         try (InputStream in = AlertRabbit.class
                 .getClassLoader()
