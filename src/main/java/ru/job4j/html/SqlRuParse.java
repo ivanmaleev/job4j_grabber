@@ -33,11 +33,10 @@ public class SqlRuParse implements Parse {
     }
 
     public static void main(String[] args) throws Exception {
-        /*SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
+        SqlRuParse sqlRuParse = new SqlRuParse(new SqlRuDateTimeParser());
         List<Post> posts = sqlRuParse.list("https:/" + "/www.sql.ru/forum/job-offers/");
         posts.forEach(System.out::println);
-        Post post = sqlRuParse.detail("https://www.sql.ru/forum/1339076/razrabotka-veb-kraulera");
-        System.out.println(post);*/
+        System.out.println(sqlRuParse.detail("https://www.sql.ru/forum/1339076/razrabotka-veb-kraulera"));
         final Properties cfg = AlertRabbit.readProperties();
         PsqlStore psqlStore = new PsqlStore(cfg);
         Post post = new Post("name3", "link3", "text3", LocalDateTime.now());
