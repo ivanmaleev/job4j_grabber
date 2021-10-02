@@ -1,2 +1,9 @@
-1) select p.name, c1.name from person as p left join company as c on p.company_id = c.id and c.id = 5  left join company as c1 on p.company_id = c1.id where c.id is null;
-2) select  count(p.id), c.name from person as p inner join company as c on p.company_id = c.id group by c.id order by count(p.id) desc limit 1;
+select p.name, c.name
+from person as p inner join company as c
+on p.company_id = c.id where p.company_id != 5;
+
+select  count(p.id), c.name
+from person as p inner join company as c
+on p.company_id = c.id
+group by c.id
+order by count(p.id) desc limit 1;
