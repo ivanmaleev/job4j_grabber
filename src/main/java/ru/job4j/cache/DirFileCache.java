@@ -1,7 +1,9 @@
 package ru.job4j.cache;
 
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.ref.SoftReference;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class DirFileCache extends AbstractCache<String, String> {
 
@@ -14,17 +16,13 @@ public class DirFileCache extends AbstractCache<String, String> {
     @Override
     protected String load(String key) {
         String textFile = "";
-        try (FileInputStream in = new FileInputStream(cachingDir.concat(key))) {
-            StringBuilder text = new StringBuilder();
-            int read;
-            while ((read = in.read()) != -1) {
-                text.append((char) read);
-            }
-            textFile = text.toString();
-        } catch (Exception e) {
+        try {
+            textFile = Files.readString(Paths.get(cachingDir.concat(key)));
+            cache.put(key, new SoftReference<>(textFile));
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        cache.put(key, new SoftReference<>(textFile));
+
         return textFile;
     }
 
